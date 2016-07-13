@@ -31,12 +31,8 @@
             }
         }
 
-        public IEnumerable<byte> ExtractBits(int numberOfBits = 2)
+        public IEnumerable<Color> GetPixels()
         {
-            if(numberOfBits < 1 || numberOfBits > BitsInAByte) {
-                throw new ArgumentOutOfRangeException();
-            }
-
             var totalPixels = _image.Width * _image.Height;
 
             for (var i = 0; i < totalPixels; i++)
@@ -44,8 +40,18 @@
                 int x = i % _image.Width;
                 int y = i / _image.Width;
 
-                var pixel = _image.GetPixel(x, y);
+                yield return _image.GetPixel(x, y);
+            }
+        }
 
+        public IEnumerable<byte> ExtractBits(int numberOfBits = 2)
+        {
+            if(numberOfBits < 1 || numberOfBits > BitsInAByte) {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            foreach (var pixel in GetPixels())
+            {
                 var red = pixel.R;
                 var green = pixel.G;
                 var blue = pixel.B;
@@ -69,15 +75,10 @@
                 throw new ArgumentOutOfRangeException();
             }
 
-            var totalPixels = _image.Width * _image.Height;
             var bytes = new List<byte>();
 
-            for (var i = 0; i < totalPixels; i++)
+            foreach (var pixel in GetPixels())
             {
-                int x = i % _image.Width;
-                int y = i / _image.Width;
-
-                var pixel = _image.GetPixel(x, y);
 
                 var red = pixel.R;
                 var green = pixel.G;
@@ -105,6 +106,7 @@
         {
             var bitCount = 0;
             int result = 0;
+
             foreach (var bits in ExtractBits(numberOfBits))
             {
                 if (bitCount >= BitsInAByte)
@@ -113,6 +115,11 @@
                     bitCount = 0;
                     result = 0;
                     continue;
+                }
+
+                if (bitCount + numberOfBits > BitsInAByte)
+                {
+                    throw new OverflowException("The bits will overflow, data loss will occur");
                 }
 
                 result = result << numberOfBits;

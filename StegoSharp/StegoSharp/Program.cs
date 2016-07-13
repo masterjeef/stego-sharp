@@ -3,6 +3,7 @@ using StegoSharp.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,8 +14,8 @@ namespace StegoSharp
     {
         static void Main(string[] args)
         {
-            //var path = @"acid_burn.jpg";
-            var path = @"1984-1.png";
+            var path = @"acid_burn.jpg";
+            //var path = @"1984-1.png";
             //var path2 = @"1984-2.png";
 
             var image = new StegoImage(path);
@@ -24,9 +25,14 @@ namespace StegoSharp
             var extracted1 = image.ExtractBytes(numberOfBits);
             var extracted2 = image.ExtractBytes2(numberOfBits).ToArray();
 
+            //foreach (var bits in extracted1)
+            //{
+            //    Console.Write((char)bits);
+            //}
+
             Console.WriteLine("\n\n\n" + Encoding.Default.GetString(extracted2));
 
-            Console.WriteLine(image.ToString());
+            //Console.WriteLine(image.ToString());
 
             //var image = new Bitmap(path);
 
