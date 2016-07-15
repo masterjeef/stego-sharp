@@ -1,2 +1,3 @@
 # stego-sharp
-Steganography library for reading data from an image
+
+This project is a work in progress. Please check back soon for updates. (:

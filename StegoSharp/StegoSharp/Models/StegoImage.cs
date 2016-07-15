@@ -62,9 +62,9 @@
                     throw new Exception("Alpha is less than 255. The alpha channel could be holding information.");
                 }
 
-                yield return (byte) red.ExtractLastBits(numberOfBits);
-                yield return (byte) green.ExtractLastBits(numberOfBits);
-                yield return (byte) blue.ExtractLastBits(numberOfBits);
+                yield return (byte) red.LowestBits(numberOfBits);
+                yield return (byte) green.LowestBits(numberOfBits);
+                yield return (byte) blue.LowestBits(numberOfBits);
             }
         }
 
@@ -91,9 +91,9 @@
                 }
 
                 int bits = 0;
-                bits = (bits | red.ExtractLastBits(numberOfBits)) << numberOfBits;
-                bits = (bits | green.ExtractLastBits(numberOfBits)) << numberOfBits;
-                bits = bits | blue.ExtractLastBits(numberOfBits);
+                bits = (bits | red.LowestBits(numberOfBits)) << numberOfBits;
+                bits = (bits | green.LowestBits(numberOfBits)) << numberOfBits;
+                bits = bits | blue.LowestBits(numberOfBits);
 
                 byte result = (byte) bits;
                 bytes.Add(result);
@@ -104,6 +104,11 @@
 
         public IEnumerable<byte> ExtractBytes2(int numberOfBits = 2)
         {
+            if (BitsInAByte % numberOfBits != 0 || numberOfBits > BitsInAByte)
+            {
+                throw new Exception("The number of bits must be less than 9 and must be a multiple of 8");
+            }
+
             var bitCount = 0;
             int result = 0;
 
@@ -115,11 +120,6 @@
                     bitCount = 0;
                     result = 0;
                     continue;
-                }
-
-                if (bitCount + numberOfBits > BitsInAByte)
-                {
-                    throw new OverflowException("The bits will overflow, data loss will occur");
                 }
 
                 result = result << numberOfBits;
