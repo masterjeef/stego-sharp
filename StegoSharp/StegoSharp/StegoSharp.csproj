@@ -58,6 +58,7 @@
     <Compile Include="ImagePropertyParsing\Strategies\ByteArrayImagePropertyParser.cs" />
     <Compile Include="ImagePropertyParsing\Strategies\StringImagePropertyParser.cs" />
     <Compile Include="Models\Fraction.cs" />
+    <Compile Include="Models\StegoPixel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\StegoImage.cs" />

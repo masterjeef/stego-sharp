@@ -17,30 +17,26 @@ namespace StegoSharp
         {
             
             var path = @"1984-1.png";
-            //var path = @"1984-2.png";
+            var path2 = @"1984-2.png";
 
             var image1 = new StegoImage(path);
+            var image2 = new StegoImage(path2);
 
-            int numberOfBits = 2;
+            var pixelDiff = image1.PixelDifference(image2).Select(p => p.Item1.Index).ToArray();
+
+            int numberOfBits = 1;
             //var extracted = image1.ExtractBytes(numberOfBits);
             var extracted = image1.ExtractBytes2(numberOfBits).ToArray();
 
-            var image = Image.FromFile("acid_burn.jpg");
-            
-            image.Save("acid-burn-2.jpg", ImageFormat.Jpeg);
-
-            //foreach (var bits in extracted1)
-            //{
-            //    Console.Write((char)bits);
-            //}
-
             var result = Encoding.Default.GetString(extracted);
+            var r2 = Encoding.UTF8.GetString(extracted);
             Console.WriteLine(result);
+
 
             //Console.WriteLine(image.ToString());
 
             var path1 = @"acid_burn.jpg";
-            var path2 = @"acid_burn_hackers_desktop.jpg";
+            path2 = @"acid_burn_hackers_desktop.jpg";
 
             var data1 = File.ReadAllBytes(path1);
             var data2 = File.ReadAllBytes(path2);

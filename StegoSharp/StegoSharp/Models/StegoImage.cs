@@ -13,35 +13,71 @@
     {
         private const int BitsInAByte = 8;
         private readonly StegoImagePropertyParser _parser = new StegoImagePropertyParser();
-
         private readonly string _path;
         private Bitmap _image;
-
-        public StegoImageProperty [] ImageProperties { get; private set; }
 
         public StegoImage(string path)
         {
             _path = path;
             _image = new Bitmap(path);
-            ImageProperties = new StegoImageProperty[_image.PropertyItems.Length];
 
+            ImageProperties = new StegoImageProperty[_image.PropertyItems.Length];
             for (var i = 0; i < ImageProperties.Length; i++)
             {
                 ImageProperties[i] = new StegoImageProperty(_image.PropertyItems[i]);
             }
         }
 
-        public IEnumerable<Color> GetPixels()
+        public StegoImageProperty[] ImageProperties { get; private set; }
+
+        public int Width
         {
-            var totalPixels = _image.Width * _image.Height;
-
-            for (var i = 0; i < totalPixels; i++)
+            get
             {
-                int x = i % _image.Width;
-                int y = i / _image.Width;
-
-                yield return _image.GetPixel(x, y);
+                return _image.Width;
             }
+        }
+
+        public int Height
+        {
+            get
+            {
+                return _image.Height;
+            }
+        }
+
+        public int TotalPixels
+        {
+            get
+            {
+                return Width * Height;
+            }
+        }
+
+        public IEnumerable<StegoPixel> Pixels 
+        {
+            get
+            {
+                for (var i = 0; i < TotalPixels; i++)
+                {
+                    yield return GetPixel(i);
+                }
+            }
+            
+        }
+
+        public StegoPixel GetPixel(int index)
+        {
+            int x = index % Width;
+            int y = index / Width;
+
+            return new StegoPixel
+            {
+                Index = index,
+                X = x,
+                Y = y,
+                Color = _image.GetPixel(x, y)
+            };
         }
 
         public IEnumerable<byte> ExtractBits(int numberOfBits = 2)
@@ -50,12 +86,12 @@
                 throw new ArgumentOutOfRangeException();
             }
 
-            foreach (var pixel in GetPixels())
+            foreach (var pixel in Pixels)
             {
-                var red = pixel.R;
-                var green = pixel.G;
-                var blue = pixel.B;
-                var alpha = pixel.A;
+                var red = pixel.Color.R;
+                var green = pixel.Color.G;
+                var blue = pixel.Color.B;
+                var alpha = pixel.Color.A;
 
                 if (alpha < 255)
                 {
@@ -66,40 +102,6 @@
                 yield return (byte) green.LowestBits(numberOfBits);
                 yield return (byte) blue.LowestBits(numberOfBits);
             }
-        }
-
-        public byte[] ExtractBytes(int numberOfBits = 2)
-        {
-            if (numberOfBits < 1 || numberOfBits > BitsInAByte)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-
-            var bytes = new List<byte>();
-
-            foreach (var pixel in GetPixels())
-            {
-
-                var red = pixel.R;
-                var green = pixel.G;
-                var blue = pixel.B;
-                var alpha = pixel.A;
-
-                if (alpha < 255)
-                {
-                    throw new Exception("Alpha is less than 255. The alpha channel could be holding information.");
-                }
-
-                int bits = 0;
-                bits = (bits | red.LowestBits(numberOfBits)) << numberOfBits;
-                bits = (bits | green.LowestBits(numberOfBits)) << numberOfBits;
-                bits = bits | blue.LowestBits(numberOfBits);
-
-                byte result = (byte) bits;
-                bytes.Add(result);
-            }
-
-            return bytes.ToArray();
         }
 
         public IEnumerable<byte> ExtractBytes2(int numberOfBits = 2)
@@ -128,6 +130,44 @@
             }
         }
 
+        public bool PixelsAreEqual(StegoImage otherImage)
+        {
+            if (Width != otherImage.Width || Height != otherImage.Height)
+            {
+                return false;
+            }
+
+            foreach (var pixel in Pixels)
+            {
+                var otherPixel = otherImage.GetPixel(pixel.Index);
+
+                if (!pixel.ColorsEqual(otherPixel))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public IEnumerable<Tuple<StegoPixel, StegoPixel>> PixelDifference(StegoImage otherImage)
+        {
+            if (Width != otherImage.Width || Height != otherImage.Height)
+            {
+                throw new Exception("Images do not share the same dimensions.");
+            }
+
+            foreach (var pixel in Pixels)
+            {
+                var otherPixel = otherImage.GetPixel(pixel.Index);
+
+                if (!pixel.ColorsEqual(otherPixel))
+                {
+                    yield return Tuple.Create<StegoPixel, StegoPixel>(pixel, otherPixel);
+                }
+            }
+        }
+
         public override string ToString()
         {
             var result = string.Format("Image '{0}'\n", _path);
@@ -140,5 +180,38 @@
 
             return result + "\n";
         }
+
+        //public byte[] ExtractBytes(int numberOfBits = 2)
+        //{
+        //    if (numberOfBits < 1 || numberOfBits > BitsInAByte)
+        //    {
+        //        throw new ArgumentOutOfRangeException();
+        //    }
+
+        //    var bytes = new List<byte>();
+
+        //    foreach (var pixel in GetPixels())
+        //    {
+        //        var red = pixel.Color.R;
+        //        var green = pixel.Color.G;
+        //        var blue = pixel.Color.B;
+        //        var alpha = pixel.Color.A;
+
+        //        if (alpha < 255)
+        //        {
+        //            throw new Exception("Alpha is less than 255. The alpha channel could be holding information.");
+        //        }
+
+        //        int bits = 0;
+        //        bits = (bits | red.LowestBits(numberOfBits)) << numberOfBits;
+        //        bits = (bits | green.LowestBits(numberOfBits)) << numberOfBits;
+        //        bits = bits | blue.LowestBits(numberOfBits);
+
+        //        byte result = (byte) bits;
+        //        bytes.Add(result);
+        //    }
+
+        //    return bytes.ToArray();
+        //}
     }
 }
