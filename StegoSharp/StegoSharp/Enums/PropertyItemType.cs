@@ -1,5 +1,4 @@
-﻿using StegoSharp.Attributes;
-namespace StegoSharp.Enums
+﻿namespace StegoSharp.Enums
 {
     public enum PropertyItemType : short
     {

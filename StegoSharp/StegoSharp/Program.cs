@@ -25,14 +25,21 @@ namespace StegoSharp
             var pixelDiff = image1.PixelDifference(image2).Select(p => p.Item1.Index).ToArray();
 
             int numberOfBits = 1;
-            //var extracted = image1.ExtractBytes(numberOfBits);
+            var extracted1 = image1.ExtractBytes(numberOfBits);
             var extracted = image1.ExtractBytes2(numberOfBits).ToArray();
+
+            foreach (var b in extracted)
+            {
+                var character = (char)b;
+                Console.Write(character);
+            }
 
             var result = Encoding.Default.GetString(extracted);
             var r2 = Encoding.UTF8.GetString(extracted);
             Console.WriteLine(result);
 
 
+            
             //Console.WriteLine(image.ToString());
 
             var path1 = @"acid_burn.jpg";

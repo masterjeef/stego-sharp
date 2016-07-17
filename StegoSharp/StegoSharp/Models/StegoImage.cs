@@ -63,7 +63,6 @@
                     yield return GetPixel(i);
                 }
             }
-            
         }
 
         public StegoPixel GetPixel(int index)
@@ -180,38 +179,5 @@
 
             return result + "\n";
         }
-
-        //public byte[] ExtractBytes(int numberOfBits = 2)
-        //{
-        //    if (numberOfBits < 1 || numberOfBits > BitsInAByte)
-        //    {
-        //        throw new ArgumentOutOfRangeException();
-        //    }
-
-        //    var bytes = new List<byte>();
-
-        //    foreach (var pixel in GetPixels())
-        //    {
-        //        var red = pixel.Color.R;
-        //        var green = pixel.Color.G;
-        //        var blue = pixel.Color.B;
-        //        var alpha = pixel.Color.A;
-
-        //        if (alpha < 255)
-        //        {
-        //            throw new Exception("Alpha is less than 255. The alpha channel could be holding information.");
-        //        }
-
-        //        int bits = 0;
-        //        bits = (bits | red.LowestBits(numberOfBits)) << numberOfBits;
-        //        bits = (bits | green.LowestBits(numberOfBits)) << numberOfBits;
-        //        bits = bits | blue.LowestBits(numberOfBits);
-
-        //        byte result = (byte) bits;
-        //        bytes.Add(result);
-        //    }
-
-        //    return bytes.ToArray();
-        //}
     }
 }
