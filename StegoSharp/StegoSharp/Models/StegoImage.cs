@@ -103,7 +103,7 @@
             }
         }
 
-        public IEnumerable<byte> ExtractBytes2(int numberOfBits = 2)
+        public IEnumerable<byte> ExtractBytes(int numberOfBits = 2)
         {
             if (BitsInAByte % numberOfBits != 0 || numberOfBits > BitsInAByte)
             {
@@ -115,17 +115,24 @@
 
             foreach (var bits in ExtractBits(numberOfBits))
             {
+                var before = ((byte)result).ToBinaryString();
+                result = result << numberOfBits;
+                result = (result | bits);
+                var after = ((byte)result).ToBinaryString();
+
+                bitCount += numberOfBits;
+
                 if (bitCount >= BitsInAByte)
                 {
                     yield return (byte) result;
                     bitCount = 0;
                     result = 0;
-                    continue;
                 }
+            }
 
-                result = result << numberOfBits;
-                result = (result | bits);
-                bitCount += numberOfBits;
+            if (result != 0 && bitCount != 0)
+            {
+                yield return (byte)result;
             }
         }
 

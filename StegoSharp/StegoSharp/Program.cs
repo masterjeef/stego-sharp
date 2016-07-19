@@ -25,17 +25,22 @@ namespace StegoSharp
             var pixelDiff = image1.PixelDifference(image2).Select(p => p.Item1.Index).ToArray();
 
             int numberOfBits = 1;
-            var extracted1 = image1.ExtractBytes(numberOfBits);
-            var extracted = image1.ExtractBytes2(numberOfBits).ToArray();
+            //var extracted1 = image1.ExtractBytes(numberOfBits);
+            var extracted = image1.ExtractBytes(numberOfBits).ToArray();
 
-            foreach (var b in extracted)
-            {
-                var character = (char)b;
-                Console.Write(character);
-            }
+            //foreach (var b in extracted)
+            //{
+            //    var character = (char)b;
+            //    Console.Write(character);
+            //}
 
             var result = Encoding.Default.GetString(extracted);
             var r2 = Encoding.UTF8.GetString(extracted);
+            var r3 = Encoding.UTF7.GetString(extracted);
+            var r4 = Encoding.UTF32.GetString(extracted);
+            var r5 = Encoding.Unicode.GetString(extracted);
+            var r6 = Encoding.BigEndianUnicode.GetString(extracted);
+            var r7 = Encoding.ASCII.GetString(extracted);
             Console.WriteLine(result);
 
 
