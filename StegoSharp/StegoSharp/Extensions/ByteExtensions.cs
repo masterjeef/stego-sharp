@@ -4,7 +4,7 @@ namespace StegoSharp.Extensions
     public static class ByteExtensions
     {
         public static int LowestBits(this byte value, int numberOfBits) {
-            int mask = (1 << numberOfBits) - 1;
+            var mask = (1 << numberOfBits) - 1;
             return value & mask;
         }
 
@@ -13,7 +13,7 @@ namespace StegoSharp.Extensions
             var result = "";
             var theByte = value;
 
-            for (int power = 7; power >= 0; power--)
+            for (var power = 7; power >= 0; power--)
             {
                 var raised = (byte) Math.Pow(2, power);
                 if (theByte - raised >= 0)

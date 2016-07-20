@@ -11,10 +11,10 @@ namespace StegoSharp.Models
         public bool ColorsEqual(StegoPixel otherPixel)
         {
             bool areEqual = true;
-            areEqual &= this.Color.R == otherPixel.Color.R;
-            areEqual &= this.Color.G == otherPixel.Color.G;
-            areEqual &= this.Color.B == otherPixel.Color.B;
-            areEqual &= this.Color.A == otherPixel.Color.A;
+            areEqual &= Color.R == otherPixel.Color.R;
+            areEqual &= Color.G == otherPixel.Color.G;
+            areEqual &= Color.B == otherPixel.Color.B;
+            areEqual &= Color.A == otherPixel.Color.A;
             return areEqual;
         }
     }

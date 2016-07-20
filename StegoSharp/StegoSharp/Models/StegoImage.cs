@@ -1,20 +1,19 @@
 ﻿namespace StegoSharp.Models
 {
 
-    using StegoSharp.ImagePropertyParsing;
-    using StegoSharp.Extensions;
+    using ImagePropertyParsing;
+    using Extensions;
 
     using System;
     using System.Collections.Generic;
     using System.Drawing;
-    using System.Threading;
-    
+
     public class StegoImage
     {
         private const int BitsInAByte = 8;
         private readonly StegoImagePropertyParser _parser = new StegoImagePropertyParser();
         private readonly string _path;
-        private Bitmap _image;
+        private readonly Bitmap _image;
 
         public StegoImage(string path)
         {
@@ -111,14 +110,14 @@
             }
 
             var bitCount = 0;
-            int result = 0;
+            var result = 0;
 
             foreach (var bits in ExtractBits(numberOfBits))
             {
-                var before = ((byte)result).ToBinaryString();
+                //var before = ((byte)result).ToBinaryString();
                 result = result << numberOfBits;
                 result = (result | bits);
-                var after = ((byte)result).ToBinaryString();
+                //var after = ((byte)result).ToBinaryString();
 
                 bitCount += numberOfBits;
 
@@ -130,10 +129,11 @@
                 }
             }
 
-            if (result != 0 && bitCount != 0)
-            {
-                yield return (byte)result;
-            }
+            // TODO: Figure out how to handle overflow (commented out below)
+            //if (bitCount != 0)
+            //{
+            //    yield return (byte)result;
+            //}
         }
 
         public bool PixelsAreEqual(StegoImage otherImage)
@@ -156,6 +156,24 @@
             return true;
         }
 
+        public bool EmbedData(byte[] data, int numberOfBits)
+        {
+            var capacity = ByteCapacity(numberOfBits);
+            if (data.Length > capacity)
+            {
+                var message = string.Format("Too much data, only {0} bytes can be embedded.", capacity);
+                throw new Exception(message);
+            }
+
+            // pull apart the bytes into the chunks we want to embed
+            // embed these chunks into each color of each pixel
+            throw new NotImplementedException();
+        }
+
+        public double ByteCapacity(int numberOfBits) {
+            return (3 * TotalPixels * numberOfBits) / 8.0;
+        }
+
         public IEnumerable<Tuple<StegoPixel, StegoPixel>> PixelDifference(StegoImage otherImage)
         {
             if (Width != otherImage.Width || Height != otherImage.Height)
@@ -169,7 +187,7 @@
 
                 if (!pixel.ColorsEqual(otherPixel))
                 {
-                    yield return Tuple.Create<StegoPixel, StegoPixel>(pixel, otherPixel);
+                    yield return Tuple.Create(pixel, otherPixel);
                 }
             }
         }
