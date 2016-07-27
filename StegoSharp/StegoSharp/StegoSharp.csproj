@@ -56,8 +56,12 @@
     <Compile Include="ImagePropertyParsing\Strategies\UShortArrayImagePropertyParser.cs" />
     <Compile Include="ImagePropertyParsing\Strategies\ByteArrayImagePropertyParser.cs" />
     <Compile Include="ImagePropertyParsing\Strategies\StringImagePropertyParser.cs" />
+    <Compile Include="Enums\ColorChannel.cs" />
     <Compile Include="Models\Fraction.cs" />
+    <Compile Include="Models\StegoColor.cs" />
+    <Compile Include="Models\StegoColorChannel.cs" />
     <Compile Include="Models\StegoPixel.cs" />
+    <Compile Include="Models\StegoStrategy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\StegoImage.cs" />

@@ -1,8 +1,8 @@
-﻿namespace StegoSharp.Models
-{
+﻿using System.Drawing.Imaging;
+using StegoSharp.Enums;
 
-    using Enums;
-    using System.Drawing.Imaging;
+namespace StegoSharp.Models
+{
 
     public class StegoImageProperty
     {

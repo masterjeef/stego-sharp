@@ -1,12 +1,12 @@
-﻿namespace StegoSharp.Models
+﻿using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using StegoSharp.Extensions;
+using StegoSharp.ImagePropertyParsing;
+
+namespace StegoSharp.Models
 {
-
-    using ImagePropertyParsing;
-    using Extensions;
-
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
 
     public class StegoImage
     {
@@ -66,39 +66,34 @@
 
         public StegoPixel GetPixel(int index)
         {
-            int x = index % Width;
-            int y = index / Width;
+            var x = index % Width;
+            var y = index / Width;
+            var color = _image.GetPixel(x, y);
 
             return new StegoPixel
             {
                 Index = index,
                 X = x,
                 Y = y,
-                Color = _image.GetPixel(x, y)
+                Color = new StegoColor(color)
             };
         }
 
         public IEnumerable<byte> ExtractBits(int numberOfBits = 2)
         {
-            if(numberOfBits < 1 || numberOfBits > BitsInAByte) {
+            if(numberOfBits < 1 || numberOfBits > BitsInAByte)
+            {
                 throw new ArgumentOutOfRangeException();
             }
 
             foreach (var pixel in Pixels)
             {
-                var red = pixel.Color.R;
-                var green = pixel.Color.G;
-                var blue = pixel.Color.B;
-                var alpha = pixel.Color.A;
 
-                if (alpha < 255)
+                foreach (var stegoColorChannel in pixel.GetColorChannels())
                 {
-                    throw new Exception("Alpha is less than 255. The alpha channel could be holding information.");
+                    yield return (byte) stegoColorChannel.Value.LowestBits(numberOfBits);
                 }
 
-                yield return (byte) red.LowestBits(numberOfBits);
-                yield return (byte) green.LowestBits(numberOfBits);
-                yield return (byte) blue.LowestBits(numberOfBits);
             }
         }
 
@@ -128,12 +123,6 @@
                     result = 0;
                 }
             }
-
-            // TODO: Figure out how to handle overflow (commented out below)
-            //if (bitCount != 0)
-            //{
-            //    yield return (byte)result;
-            //}
         }
 
         public bool PixelsAreEqual(StegoImage otherImage)
@@ -156,7 +145,7 @@
             return true;
         }
 
-        public bool EmbedData(byte[] data, int numberOfBits)
+        public void EmbedData(byte[] data, int numberOfBits)
         {
             var capacity = ByteCapacity(numberOfBits);
             if (data.Length > capacity)
@@ -165,9 +154,37 @@
                 throw new Exception(message);
             }
 
-            // pull apart the bytes into the chunks we want to embed
-            // embed these chunks into each color of each pixel
-            throw new NotImplementedException();
+            // pull apart the bytes into the chunks that we want to embed
+            var bitIndex = 0;
+            var bits = data.SelectMany(x => BreakIntoBits(x, numberOfBits)).ToArray();
+            
+            foreach (var pixel in Pixels)
+            {
+                var stegoColor = new StegoColor();
+                foreach (var color in pixel.GetColorChannels())
+                {
+                    var result = (int) color.Value;
+                    result = ((result >> numberOfBits) << numberOfBits) | bits[bitIndex];
+                    stegoColor.SetChannel(color.ColorChannel, (byte) result);
+                    bitIndex++;
+                }
+                _image.SetPixel(pixel.X, pixel.Y, stegoColor.Color);
+            }
+        }
+
+        public IEnumerable<byte> BreakIntoBits(byte data, int numberOfBits)
+        {
+            var bitCount = 0;
+            while (bitCount < BitsInAByte)
+            {
+                var result = (int) data;
+                // shift left to clear out left bits
+                // shift right to clearn out right bits
+                result = result >> (BitsInAByte - numberOfBits - bitCount);
+                var bits = (byte) result;
+                yield return (byte) bits.LowestBits(numberOfBits);
+                bitCount += numberOfBits;
+            }
         }
 
         public double ByteCapacity(int numberOfBits) {

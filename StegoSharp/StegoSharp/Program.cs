@@ -38,33 +38,6 @@ namespace StegoSharp
             var r6 = Encoding.BigEndianUnicode.GetString(extracted);
             var r7 = Encoding.ASCII.GetString(extracted);
             Console.WriteLine(result);
-
-
-            
-            //Console.WriteLine(image.ToString());
-
-            var path1 = @"acid_burn.jpg";
-            path2 = @"acid_burn_hackers_desktop.jpg";
-
-            var data1 = File.ReadAllBytes(path1);
-            var data2 = File.ReadAllBytes(path2);
-
-            var unknownBytes = new List<byte>();
-            for (int i = 0; i < data1.Length; i++)
-            {
-                if (i >= data2.Length || data1[i] != data2[i])
-                {
-                    //throw new Exception("bytes not equal");
-                    unknownBytes.Add(data1[i]);
-                }
-            }
-
-            var unknown = unknownBytes.ToArray();
-            var message = Encoding.Default.GetString(unknown);
-            Console.WriteLine(message);
-            var reverse = string.Join("", message.Reverse());
-            Console.WriteLine(reverse);
-
         }
     }
 }

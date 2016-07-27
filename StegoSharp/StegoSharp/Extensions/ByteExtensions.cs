@@ -5,6 +5,9 @@ namespace StegoSharp.Extensions
     {
         public static int LowestBits(this byte value, int numberOfBits) {
             var mask = (1 << numberOfBits) - 1;
+            //var m = ((byte) mask).ToBinaryString();
+            //var val = value.ToBinaryString();
+            //var result = ((byte) (value & mask)).ToBinaryString();
             return value & mask;
         }
 
