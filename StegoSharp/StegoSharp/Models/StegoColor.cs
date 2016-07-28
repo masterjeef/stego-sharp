@@ -9,7 +9,10 @@ namespace StegoSharp.Models
     {
         private readonly Dictionary<ColorChannel, StegoColorChannel> _colorChannels = new Dictionary<ColorChannel, StegoColorChannel>();
 
-        public StegoColor() { }
+        public StegoColor()
+        {
+            SetChannel(ColorChannel.A, 255);
+        }
 
         public StegoColor(Color color)
         {
@@ -39,7 +42,7 @@ namespace StegoSharp.Models
             get { return _colorChannels[ColorChannel.A]; }
         }
 
-        public Color Color
+        public Color FromArgb
         {
             get
             {
@@ -49,9 +52,7 @@ namespace StegoSharp.Models
                     throw new ArgumentNullException(message);
                 }
 
-                var alpha = A ?? new StegoColorChannel(ColorChannel.A, 255);
-
-                return Color.FromArgb(alpha.Value, R.Value, G.Value, B.Value);
+                return Color.FromArgb(A.Value, R.Value, G.Value, B.Value);
             }
         }
 
@@ -83,5 +84,7 @@ namespace StegoSharp.Models
 
             return _colorChannels[channel];
         }
+
+
     }
 }

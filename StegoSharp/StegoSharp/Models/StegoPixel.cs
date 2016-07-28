@@ -8,8 +8,7 @@ namespace StegoSharp.Models
     public class StegoPixel
     {
         private const string NoColorChannelMessage = "No color channels specified.";
-        private const string DuplicateChannelMessage = "Duplicate color channels found.";
-
+        
         public int Index { get; set; }
 
         public int X { get; set; }
@@ -30,11 +29,6 @@ namespace StegoSharp.Models
                 throw new ArgumentOutOfRangeException(NoColorChannelMessage);
             }
 
-            if (channels.Distinct().Count() != channels.Length)
-            {
-                throw new ArgumentException(DuplicateChannelMessage);
-            }
-
             foreach (var colorChannel in channels)
             {
                 yield return Color.GetChannel(colorChannel);
@@ -43,12 +37,7 @@ namespace StegoSharp.Models
 
         public bool ColorsEqual(StegoPixel otherPixel)
         {
-            var areEqual = true;
-            areEqual &= Color.R == otherPixel.Color.R;
-            areEqual &= Color.G == otherPixel.Color.G;
-            areEqual &= Color.B == otherPixel.Color.B;
-            areEqual &= Color.A == otherPixel.Color.A;
-            return areEqual;
+            return Color.FromArgb == otherPixel.Color.FromArgb;
         }
     }
 }

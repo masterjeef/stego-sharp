@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using StegoSharp.Enums;
 
 namespace StegoSharp
 {
-    class Program
+    internal class Program
     {
         static void Main(string[] args)
         {
@@ -20,9 +21,9 @@ namespace StegoSharp
 
             var pixelDiff = image1.PixelDifference(image2).Select(p => p.Item1.Index).ToArray();
 
-            int numberOfBits = 1;
             //var extracted1 = image1.ExtractBytes(numberOfBits);
-            var extracted = image1.ExtractBytes(numberOfBits).ToArray();
+
+            var extracted = image1.ExtractBytes().ToArray();
 
             //foreach (var b in extracted)
             //{

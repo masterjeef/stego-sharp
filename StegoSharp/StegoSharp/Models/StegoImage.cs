@@ -2,15 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Text;
 using StegoSharp.Extensions;
 using StegoSharp.ImagePropertyParsing;
+using Encoder = System.Drawing.Imaging.Encoder;
 
 namespace StegoSharp.Models
 {
 
     public class StegoImage
     {
-        private const int BitsInAByte = 8;
+        public const int BitsInAByte = 8;
         private readonly StegoImagePropertyParser _parser = new StegoImagePropertyParser();
         private readonly string _path;
         private readonly Bitmap _image;
@@ -25,9 +28,13 @@ namespace StegoSharp.Models
             {
                 ImageProperties[i] = new StegoImageProperty(_image.PropertyItems[i]);
             }
+
+            Strategy = Strategy ?? new StegoStrategy();
         }
 
         public StegoImageProperty[] ImageProperties { get; private set; }
+
+        public StegoStrategy Strategy { get; private set; }
 
         public int Width
         {
@@ -53,6 +60,14 @@ namespace StegoSharp.Models
             }
         }
 
+        public double ByteCapacity
+        {
+            get
+            {
+                return Strategy.ColorChannels.Length * TotalPixels * Strategy.BitsPerChannel / (double)BitsInAByte;
+            }
+        }
+
         public IEnumerable<StegoPixel> Pixels 
         {
             get
@@ -64,7 +79,7 @@ namespace StegoSharp.Models
             }
         }
 
-        public StegoPixel GetPixel(int index)
+        private StegoPixel GetPixel(int index)
         {
             var x = index % Width;
             var y = index / Width;
@@ -79,42 +94,30 @@ namespace StegoSharp.Models
             };
         }
 
-        public IEnumerable<byte> ExtractBits(int numberOfBits = 2)
+        private IEnumerable<byte> ExtractBits()
         {
-            if(numberOfBits < 1 || numberOfBits > BitsInAByte)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-
             foreach (var pixel in Pixels)
             {
 
-                foreach (var stegoColorChannel in pixel.GetColorChannels())
+                foreach (var stegoColorChannel in pixel.GetColorChannels(Strategy.ColorChannels))
                 {
-                    yield return (byte) stegoColorChannel.Value.LowestBits(numberOfBits);
+                    yield return (byte) stegoColorChannel.Value.LowestBits(Strategy.BitsPerChannel);
                 }
 
             }
         }
 
-        public IEnumerable<byte> ExtractBytes(int numberOfBits = 2)
+        public IEnumerable<byte> ExtractBytes()
         {
-            if (BitsInAByte % numberOfBits != 0 || numberOfBits > BitsInAByte)
-            {
-                throw new Exception("The number of bits must be less than 9 and must be a multiple of 8");
-            }
-
             var bitCount = 0;
             var result = 0;
 
-            foreach (var bits in ExtractBits(numberOfBits))
+            foreach (var bits in ExtractBits())
             {
-                //var before = ((byte)result).ToBinaryString();
-                result = result << numberOfBits;
+                result = result << Strategy.BitsPerChannel;
                 result = (result | bits);
-                //var after = ((byte)result).ToBinaryString();
 
-                bitCount += numberOfBits;
+                bitCount += Strategy.BitsPerChannel;
 
                 if (bitCount >= BitsInAByte)
                 {
@@ -145,50 +148,92 @@ namespace StegoSharp.Models
             return true;
         }
 
-        public void EmbedData(byte[] data, int numberOfBits)
+        public void EmbedData(byte[] data)
         {
-            var capacity = ByteCapacity(numberOfBits);
-            if (data.Length > capacity)
+            if (data.Length > ByteCapacity)
             {
-                var message = string.Format("Too much data, only {0} bytes can be embedded.", capacity);
-                throw new Exception(message);
+                var message = string.Format("Too much data, only {0} bytes can be embedded.", ByteCapacity);
+                throw new ArgumentException(message);
             }
 
-            // pull apart the bytes into the chunks that we want to embed
+            // pull apart the bytes into the chunks that we can to embed
             var bitIndex = 0;
-            var bits = data.SelectMany(x => BreakIntoBits(x, numberOfBits)).ToArray();
-            
+            var bits = data.SelectMany(BreakIntoBits).ToArray();
+
+            //var bits1 = bits.Select(x => x.ToBinaryString()).ToList();
+            //var data1 = data.Select(x => x.ToBinaryString()).ToList();
+
             foreach (var pixel in Pixels)
             {
-                var stegoColor = new StegoColor();
-                foreach (var color in pixel.GetColorChannels())
+                foreach (var color in pixel.GetColorChannels(Strategy.ColorChannels))
                 {
+                    if (bitIndex >= bits.Length)
+                    {
+                        break;
+                    }
+
                     var result = (int) color.Value;
-                    result = ((result >> numberOfBits) << numberOfBits) | bits[bitIndex];
-                    stegoColor.SetChannel(color.ColorChannel, (byte) result);
+                    result = ((result >> Strategy.BitsPerChannel) << Strategy.BitsPerChannel) | bits[bitIndex];
+                    pixel.Color.SetChannel(color.ColorChannel, (byte) result);
                     bitIndex++;
                 }
-                _image.SetPixel(pixel.X, pixel.Y, stegoColor.Color);
+                
+                _image.SetPixel(pixel.X, pixel.Y, pixel.Color.FromArgb);
+
+                if (bitIndex >= bits.Length)
+                {
+                    break;
+                }
             }
         }
 
-        public IEnumerable<byte> BreakIntoBits(byte data, int numberOfBits)
+        private IEnumerable<byte> BreakIntoBits(byte data)
         {
             var bitCount = 0;
             while (bitCount < BitsInAByte)
             {
                 var result = (int) data;
-                // shift left to clear out left bits
-                // shift right to clearn out right bits
-                result = result >> (BitsInAByte - numberOfBits - bitCount);
+                result = result >> (BitsInAByte - Strategy.BitsPerChannel - bitCount);
                 var bits = (byte) result;
-                yield return (byte) bits.LowestBits(numberOfBits);
-                bitCount += numberOfBits;
+                yield return (byte) bits.LowestBits(Strategy.BitsPerChannel);
+                bitCount += Strategy.BitsPerChannel;
             }
         }
 
-        public double ByteCapacity(int numberOfBits) {
-            return (3 * TotalPixels * numberOfBits) / 8.0;
+        public void Save(string filename)
+        {
+            if (_image.RawFormat.Equals(ImageFormat.Jpeg))
+            {
+                throw new Exception("Jpegs not supported due to lossy compression. ):");
+            }
+
+            var encoder = LocateEncoder(_image.RawFormat);
+
+            var encodingParams = new[]
+            {
+                new EncoderParameter(Encoder.Quality, 100L),
+                new EncoderParameter(Encoder.Compression, (long) EncoderValue.CompressionNone)
+            };
+
+            var encoderParameters = new EncoderParameters(encodingParams.Length)
+            {
+                Param = encodingParams
+            };
+
+            _image.Save(filename, encoder, encoderParameters);
+        }
+
+        private ImageCodecInfo LocateEncoder(ImageFormat format)
+        {
+            foreach (var codec in ImageCodecInfo.GetImageDecoders())
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+
+            return null;
         }
 
         public IEnumerable<Tuple<StegoPixel, StegoPixel>> PixelDifference(StegoImage otherImage)
