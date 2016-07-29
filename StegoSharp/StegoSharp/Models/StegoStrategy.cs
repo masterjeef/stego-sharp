@@ -14,6 +14,7 @@ namespace StegoSharp.Models
         {
             BitsPerChannel = 1;
             ColorChannels = new [] {ColorChannel.R, ColorChannel.G, ColorChannel.B};
+            PixelSelection = p => true;
         }
 
         public int BitsPerChannel
@@ -46,5 +47,7 @@ namespace StegoSharp.Models
                 _colorChannels = value;
             }
         }
+
+        public Func<StegoPixel, bool> PixelSelection { get; set; }
     }
 }

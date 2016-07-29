@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Text;
 using StegoSharp.Extensions;
 using StegoSharp.ImagePropertyParsing;
 using Encoder = System.Drawing.Imaging.Encoder;
@@ -64,7 +63,7 @@ namespace StegoSharp.Models
         {
             get
             {
-                return Strategy.ColorChannels.Length * TotalPixels * Strategy.BitsPerChannel / (double)BitsInAByte;
+                return Strategy.ColorChannels.Length * Pixels.Count(Strategy.PixelSelection) * Strategy.BitsPerChannel / (double)BitsInAByte;
             }
         }
 
@@ -96,7 +95,7 @@ namespace StegoSharp.Models
 
         private IEnumerable<byte> ExtractBits()
         {
-            foreach (var pixel in Pixels)
+            foreach (var pixel in Pixels.Where(Strategy.PixelSelection))
             {
                 foreach (var stegoColorChannel in pixel.GetColorChannels(Strategy.ColorChannels))
                 {
@@ -126,28 +125,9 @@ namespace StegoSharp.Models
             }
         }
 
-        public bool PixelsAreEqual(StegoImage otherImage)
-        {
-            if (Width != otherImage.Width || Height != otherImage.Height)
-            {
-                return false;
-            }
-
-            foreach (var pixel in Pixels)
-            {
-                var otherPixel = otherImage.GetPixel(pixel.Index);
-
-                if (!pixel.ColorsEqual(otherPixel))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         public void EmbedData(byte[] data)
         {
+            // TODO: clean this up a bit more...
             if (data.Length > ByteCapacity)
             {
                 var message = string.Format("Too much data, only {0} bytes can be embedded.", ByteCapacity);
@@ -158,7 +138,7 @@ namespace StegoSharp.Models
             var bitIndex = 0;
             var bits = data.SelectMany(BreakIntoBits).ToArray();
 
-            foreach (var pixel in Pixels)
+            foreach (var pixel in Pixels.Where(Strategy.PixelSelection))
             {
                 foreach (var color in pixel.GetColorChannels(Strategy.ColorChannels))
                 {
@@ -167,12 +147,12 @@ namespace StegoSharp.Models
                         break;
                     }
 
-                    var result = (int) color.Value;
+                    var result = (int)color.Value;
                     result = ((result >> Strategy.BitsPerChannel) << Strategy.BitsPerChannel) | bits[bitIndex];
-                    pixel.Color.SetChannel(color.ColorChannel, (byte) result);
+                    pixel.Color.SetChannel(color.ColorChannel, (byte)result);
                     bitIndex++;
                 }
-                
+
                 _image.SetPixel(pixel.X, pixel.Y, pixel.Color.FromArgb);
 
                 if (bitIndex >= bits.Length)
@@ -192,10 +172,10 @@ namespace StegoSharp.Models
             var bitCount = 0;
             while (bitCount < BitsInAByte)
             {
-                var result = (int) data;
+                var result = (int)data;
                 result = result >> (BitsInAByte - Strategy.BitsPerChannel - bitCount);
-                var bits = (byte) result;
-                yield return (byte) bits.LowestBits(Strategy.BitsPerChannel);
+                var bits = (byte)result;
+                yield return (byte)bits.LowestBits(Strategy.BitsPerChannel);
                 bitCount += Strategy.BitsPerChannel;
             }
         }
@@ -231,14 +211,44 @@ namespace StegoSharp.Models
             return null;
         }
 
-        public IEnumerable<Tuple<StegoPixel, StegoPixel>> PixelDifference(StegoImage otherImage)
+        public bool PixelsAreEqual(StegoImage otherImage, Func<StegoPixel, bool> pixelsToCompare = null)
+        {
+            if (Width != otherImage.Width || Height != otherImage.Height)
+            {
+                return false;
+            }
+
+            if (pixelsToCompare == null)
+            {
+                pixelsToCompare = p => true;
+            }
+
+            foreach (var pixel in Pixels.Where(pixelsToCompare))
+            {
+                var otherPixel = otherImage.GetPixel(pixel.Index);
+
+                if (!pixel.ColorsEqual(otherPixel))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public IEnumerable<Tuple<StegoPixel, StegoPixel>> PixelDifference(StegoImage otherImage, Func<StegoPixel, bool> pixelsToCompare = null)
         {
             if (Width != otherImage.Width || Height != otherImage.Height)
             {
                 throw new Exception("Images do not share the same dimensions.");
             }
 
-            foreach (var pixel in Pixels)
+            if (pixelsToCompare == null)
+            {
+                pixelsToCompare = p => true;
+            }
+
+            foreach (var pixel in Pixels.Where(pixelsToCompare))
             {
                 var otherPixel = otherImage.GetPixel(pixel.Index);
 

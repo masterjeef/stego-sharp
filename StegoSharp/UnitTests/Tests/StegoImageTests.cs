@@ -48,10 +48,6 @@ namespace UnitTests.Tests
                 }
             }
 
-            //if (bitCount > 0)
-            //{
-            //    result.Add((byte)workingByte);
-            //}
             image.Strategy.BitsPerChannel = numberOfBits;
             var otherResult = image.ExtractBytes().ToArray();
 
@@ -80,7 +76,6 @@ namespace UnitTests.Tests
             var embedded = embeddedString.Substring(0, message.Length);
 
             Assert.Equal(message, embedded);
-            
         }
 
         [Fact]
@@ -90,6 +85,7 @@ namespace UnitTests.Tests
 
             var slothPath = @"images/sloth.png";
             var slothImage = new StegoImage(slothPath);
+            slothImage.Strategy.PixelSelection = p => p.Index % 2 == 0;
             slothImage.EmbedData(Encoding.Default.GetBytes(message));
 
             var slothEmbeddedPath = @"sloth-embedded.png";
@@ -135,6 +131,7 @@ namespace UnitTests.Tests
             File.WriteAllBytes(slothBytesPath, embeddedSlothBytes);
 
             var slothBytesImage = new StegoImage(slothBytesPath);
+            slothBytesImage.Strategy.PixelSelection = p => p.Index % 2 == 0;
             var embeddedMessage = Encoding.Default.GetString(slothBytesImage.ExtractBytes().ToArray())
                 .Substring(0, message.Length);
 
