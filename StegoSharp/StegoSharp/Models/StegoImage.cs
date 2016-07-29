@@ -128,6 +128,11 @@ namespace StegoSharp.Models
         public void EmbedData(byte[] data)
         {
             // TODO: clean this up a bit more...
+            if (_image.RawFormat.Equals(ImageFormat.Jpeg))
+            {
+                throw new Exception("Jpegs not supported due to lossy compression. ):");
+            }
+
             if (data.Length > ByteCapacity)
             {
                 var message = string.Format("Too much data, only {0} bytes can be embedded.", ByteCapacity);
@@ -164,11 +169,6 @@ namespace StegoSharp.Models
 
         private IEnumerable<byte> BreakIntoBits(byte data)
         {
-            if (_image.RawFormat.Equals(ImageFormat.Jpeg))
-            {
-                throw new Exception("Jpegs not supported due to lossy compression. ):");
-            }
-
             var bitCount = 0;
             while (bitCount < BitsInAByte)
             {

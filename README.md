@@ -1,3 +1,3 @@
-# stego-sharp
+# Stego Sharp
 
-This project is a work in progress. Please check back soon for updates. (:
+This project works, just need to update the readme. See the unit tests for sample usage.
