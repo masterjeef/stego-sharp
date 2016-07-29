@@ -98,12 +98,10 @@ namespace StegoSharp.Models
         {
             foreach (var pixel in Pixels)
             {
-
                 foreach (var stegoColorChannel in pixel.GetColorChannels(Strategy.ColorChannels))
                 {
                     yield return (byte) stegoColorChannel.Value.LowestBits(Strategy.BitsPerChannel);
                 }
-
             }
         }
 
@@ -160,9 +158,6 @@ namespace StegoSharp.Models
             var bitIndex = 0;
             var bits = data.SelectMany(BreakIntoBits).ToArray();
 
-            //var bits1 = bits.Select(x => x.ToBinaryString()).ToList();
-            //var data1 = data.Select(x => x.ToBinaryString()).ToList();
-
             foreach (var pixel in Pixels)
             {
                 foreach (var color in pixel.GetColorChannels(Strategy.ColorChannels))
@@ -189,6 +184,11 @@ namespace StegoSharp.Models
 
         private IEnumerable<byte> BreakIntoBits(byte data)
         {
+            if (_image.RawFormat.Equals(ImageFormat.Jpeg))
+            {
+                throw new Exception("Jpegs not supported due to lossy compression. ):");
+            }
+
             var bitCount = 0;
             while (bitCount < BitsInAByte)
             {
@@ -202,11 +202,6 @@ namespace StegoSharp.Models
 
         public void Save(string filename)
         {
-            if (_image.RawFormat.Equals(ImageFormat.Jpeg))
-            {
-                throw new Exception("Jpegs not supported due to lossy compression. ):");
-            }
-
             var encoder = LocateEncoder(_image.RawFormat);
 
             var encodingParams = new[]
