@@ -23,6 +23,7 @@ namespace StegoSharp.Models
             _image = new Bitmap(path);
 
             ImageProperties = new StegoImageProperty[_image.PropertyItems.Length];
+
             for (var i = 0; i < ImageProperties.Length; i++)
             {
                 ImageProperties[i] = new StegoImageProperty(_image.PropertyItems[i]);
@@ -33,7 +34,7 @@ namespace StegoSharp.Models
 
         public StegoImageProperty[] ImageProperties { get; private set; }
 
-        public StegoStrategy Strategy { get; private set; }
+        public StegoStrategy Strategy { get; set; }
 
         public int Width
         {
