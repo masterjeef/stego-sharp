@@ -66,7 +66,7 @@ namespace UnitTests.Tests
 
             var message = Guid.NewGuid().ToString();
 
-            image.EmbedData(Encoding.Default.GetBytes(message));
+            image.EmbedPayload(Encoding.Default.GetBytes(message));
 
             var resultPath = @"iguana-embedded.png";
             image.Save(resultPath);
@@ -86,7 +86,7 @@ namespace UnitTests.Tests
             var slothPath = @"images/sloth.png";
             var slothImage = new StegoImage(slothPath);
             slothImage.Strategy.PixelSelection = p => p.Index % 2 == 0;
-            slothImage.EmbedData(Encoding.Default.GetBytes(message));
+            slothImage.EmbedPayload(Encoding.Default.GetBytes(message));
 
             var slothEmbeddedPath = @"sloth-embedded.png";
             slothImage.Save(slothEmbeddedPath);
@@ -95,7 +95,7 @@ namespace UnitTests.Tests
             // embed the sloth into the astronaut
             var astronautPath = @"images/astronaut.png";
             var astronautImage = new StegoImage(astronautPath);
-            astronautImage.EmbedData(slothBytes);
+            astronautImage.EmbedPayload(slothBytes);
 
             // save the astronaut
             var embeddedAstronautPath = @"astronaut-embedded.png";
@@ -105,7 +105,7 @@ namespace UnitTests.Tests
             // embed the astronaut into space
             var spacePath = @"images/space.png";
             var spaceImage = new StegoImage(spacePath);
-            spaceImage.EmbedData(astronautBytes);
+            spaceImage.EmbedPayload(astronautBytes);
 
             // save space
             var spaceEmbeddedPath = @"space-embedded.png";

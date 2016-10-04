@@ -126,7 +126,7 @@ namespace StegoSharp.Models
             }
         }
 
-        public void EmbedData(byte[] data)
+        public void EmbedPayload(byte[] payload)
         {
             // TODO: clean this up a bit more...
             if (_image.RawFormat.Equals(ImageFormat.Jpeg))
@@ -134,7 +134,7 @@ namespace StegoSharp.Models
                 throw new Exception("Jpegs not supported due to lossy compression. ):");
             }
 
-            if (data.Length > ByteCapacity)
+            if (payload.Length > ByteCapacity)
             {
                 var message = string.Format("Too much data, only {0} bytes can be embedded.", ByteCapacity);
                 throw new ArgumentException(message);
@@ -142,7 +142,7 @@ namespace StegoSharp.Models
 
             // pull apart the bytes into the chunks that we can to embed
             var bitIndex = 0;
-            var bits = data.SelectMany(BreakIntoBits).ToArray();
+            var bits = payload.SelectMany(BreakIntoBits).ToArray();
 
             foreach (var pixel in Pixels.Where(Strategy.PixelSelection))
             {
@@ -168,12 +168,12 @@ namespace StegoSharp.Models
             }
         }
 
-        private IEnumerable<byte> BreakIntoBits(byte data)
+        private IEnumerable<byte> BreakIntoBits(byte payloadChunk)
         {
             var bitCount = 0;
             while (bitCount < BitsInAByte)
             {
-                var result = (int)data;
+                var result = (int) payloadChunk;
                 result = result >> (BitsInAByte - Strategy.BitsPerChannel - bitCount);
                 var bits = (byte)result;
                 yield return (byte)bits.LowestBits(Strategy.BitsPerChannel);
