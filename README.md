@@ -27,15 +27,16 @@ CODE :
 
 #### Number of bits
 
-Must be > 0 and <= to 8. The is due to the fact that we only have 8 bits to work with on each color channel.
+Must be > 0 and <= to 8. The is due to the fact that we only have 8 bits to work with in each color channel.
 
 EX : 
 
 We want to embed the bits 11 (3 in decimal) into the red color channel for a single pixel. See below.
 
-BEFORE				AFTER
-Red (172) 	=> 		Red (175)
-10101100			10101111
+| BEFORE    |    |     AFTER |
+|-----------|:--:|----------:|
+| Red (172) | => | Red (175) |
+| 10101100  |    |  10101111 |
 
 CODE : 
 
