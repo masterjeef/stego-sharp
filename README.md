@@ -16,7 +16,7 @@ Bits of data can be read/written to any of the following channels
 * Blue 0-255 (8 bits)
 * Alpha 0-255 (8 bits)
 		
-EX : 
+SCENARIO : 
 
 Embed the bytes into the Green, Blue, and Red channels. Note that the order of the channels does matter.
 
@@ -29,9 +29,9 @@ CODE :
 
 Must be > 0 and <= to 8. The is due to the fact that we only have 8 bits to work with in each color channel.
 
-EX : 
+SCENARIO : 
 
-We want to embed the bits 11 (3 in decimal) into the red color channel for a single pixel. See below.
+Embed the bits 11 (3 in decimal) into the red color channel for a single pixel. See below.
 
 | BEFORE    |    |     AFTER |
 |-----------|:--:|----------:|
@@ -52,7 +52,7 @@ Increasing the number of bits will increase capacity, but only at the risk of di
 
 Embedding the data into the first `x` number of pixels is too easy to read. This library allows the user to decide what pixels to read/write to.
 
-EX :
+SCENARIO :
 
 Reading/Writing to the even pixels in the image. {0, 2, 4, 6, 8, ...}
 
@@ -88,7 +88,7 @@ And so I decided to stegafy some images, see below :
 
 #### This got me thinking...
 
-Can hide a payload within a payload (aka stegaception)? Why yes we can, see below :
+Can we hide a payload within a payload (aka stegaception)? Why yes we can, see below :
 
 ![Space](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/space-embedded.png?raw=true)
 
