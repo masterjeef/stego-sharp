@@ -44,7 +44,7 @@ CODE :
 	image.Strategy.BitsPerChannel = 2;
 	
 
-##### Considerations
+**Considerations**
 
 Increasing the number of bits will increase capacity, but only at the risk of distorting the image. I recommend only embedding up to 2 bits of data in each color channel.
 
@@ -61,26 +61,22 @@ CODE :
 	var image = new StegoImage("images/goodbye.png");
     image.Strategy.PixelSelection = p => p.Index % 2 == 0;
 
-##### Considerations
+**Considerations**
 
 Utilizing only a subset of all the pixels will decrease capacity. For example, embedding data into the even pixels will cut the amount of storage in half.
 
-### More Considerations
+#### More Considerations
 
 * If the image type does not allow transparency, the then entire alpha channel can be used.
-* Writing data to jpegs is not supported due to lossy compression. Unfortunately the compression changes the pixels thus corrupted our hidden data.
+* Writing a payload to jpegs is not supported due to lossy compression. Unfortunately the compression corrupts the payload.
 
 ### Having Fun with Steganography
 
 And so I decided to stegafy some images, see below :
 
-**Original**
-
-![Iguana](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/UnitTests/images/iguana.png?raw=true)
-
-**Stegafied**
-
-![Iguana](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/iguana-embedded.png?raw=true)
+**Original**            |  **Stegafied**
+:-------------------------:|:-------------------------:
+![Iguana](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/UnitTests/images/iguana.png?raw=true)  |  ![Iguana](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/iguana-embedded.png?raw=true)
 
 **The hidden payload**
 
