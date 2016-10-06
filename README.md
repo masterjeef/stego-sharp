@@ -7,7 +7,7 @@ This is a handy .Net library for embedding data into an image, and also reading 
 
 There are a few different strategies to consider when embedding/extracting bits from an image.
 
-#### Color channels (bits)
+### Color channels (bits)
 
 Bits of data can be read/written to any of the following channels
 
@@ -25,7 +25,7 @@ CODE :
 	var image = new StegoImage("images/hello.png");
 	image.Strategy.ColorChannels = new[] { ColorChannel.G, ColorChannel.B, ColorChannel.R };
 
-#### Number of bits
+### Number of bits
 
 Must be > 0 and <= to 8. The is due to the fact that we only have 8 bits to work with in each color channel.
 
@@ -43,11 +43,13 @@ CODE :
 	var image = new StegoImage("images/world.png");
 	image.Strategy.BitsPerChannel = 2;
 	
+
 ##### Considerations
 
 Increasing the number of bits will increase capacity, but only at the risk of distorting the image. I recommend only embedding up to 2 bits of data in each color channel.
 
-#### The pixels that we want to read/write data into, or the pixels in question.
+### The Pixels
+
 Embedding the data into the first `x` number of pixels is too easy to read. This library allows the user to decide what pixels to read/write to.
 
 EX :
@@ -63,11 +65,39 @@ CODE :
 
 Utilizing only a subset of all the pixels will decrease capacity. For example, embedding data into the even pixels will cut the amount of storage in half.
 
-#### Other Considerations
+### More Considerations
 
 * If the image type does not allow transparency, the then entire alpha channel can be used.
 * Writing data to jpegs is not supported due to lossy compression. Unfortunately the compression changes the pixels thus corrupted our hidden data.
 
 ### Having Fun with Steganography
 
-coming soon...
+And so I decided to stegafy some images, see below :
+
+**Original**
+
+![Iguana](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/UnitTests/images/iguana.png?raw=true)
+
+**Stegafied**
+
+![Iguana](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/iguana-embedded.png?raw=true)
+
+**Hidden Payload**
+
+>We exist without skin color,without nationality, without religious bias... and you call us criminals. You build atomic bombs, you wage wars, you murder, cheat, and lie to usand try to make us believe it's for our own good, yet we're the criminals.
+
+This got me wondering, can we stegafy hidden data within stegified data (aka stegaception)? Why yes we can, see below :
+
+![Space](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/space-embedded.png?raw=true)
+
+ **Hidden Payload**
+
+![Astronaut](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/astronaut-embedded.png?raw=true)
+
+**Hidden Payload**
+ 
+![Sloth](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/sloth-embedded.png?raw=true)
+
+**Hidden Payload**
+ 
+>The probability of success is difficult to estimate; but if we never search the chance of success is zero.
