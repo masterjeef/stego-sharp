@@ -99,3 +99,9 @@ Can we hide a payload within a payload (aka stegaception)? Why yes we can, see b
 **Hidden inside the sloth**
  
 >The probability of success is difficult to estimate; but if we never search the chance of success is zero.
+
+I also wanted to know what it would look like if all the color channels were utilized. See below
+
+**Default** `x => true`            |  **Every pixel position is divisible by 3** `x => x.Index % 3 == 0;`
+:-------------------------:|:-------------------------:
+![Pillars](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/UnitTests/images/pillar-test-1.png?raw=true)  |  ![Pillars 2](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/pillar-test-2png?raw=true)
