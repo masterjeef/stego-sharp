@@ -100,7 +100,9 @@ Can we hide a payload within a payload (aka stegaception)? Why yes we can, see b
  
 >The probability of success is difficult to estimate; but if we never search the chance of success is zero.
 
-I also wanted to know what it would look like if all the color channels were utilized. See below
+#### What would it look like if all bits in each color channel were used?
+
+This experiment produced some cool visualizations of what what the embedded data looks like. See below.
 
 **Default** `x => true`            |  `x => x.Index % 3 == 0;`
 :-------------------------:|:-------------------------:
