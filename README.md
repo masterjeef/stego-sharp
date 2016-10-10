@@ -102,6 +102,6 @@ Can we hide a payload within a payload (aka stegaception)? Why yes we can, see b
 
 I also wanted to know what it would look like if all the color channels were utilized. See below
 
-**Default** `x => true`            |  **Every pixel position is divisible by 3** `x => x.Index % 3 == 0;`
+**Default** `x => true`            |  `x => x.Index % 3 == 0;`
 :-------------------------:|:-------------------------:
 ![Pillars](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/pillar-test-1.png?raw=true)  |  ![Pillars 2](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/pillar-test-2.png?raw=true)
