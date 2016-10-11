@@ -90,10 +90,13 @@ Can we hide a payload within a payload (aka stegaception)? Why yes we can, see b
 |---|
 | ![Space](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/space-embedded.png?raw=true) |
 | Space Payload |
+|---|
 |![Astronaut](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/astronaut-embedded.png?raw=true) |
 | Mr. Devito Payload |
+|---|
 | ![Sloth](https://github.com/masterjeef/stego-sharp/blob/master/StegoSharp/images/sloth-embedded.png?raw=true) |
 | Sloth Payload (Final payload) |
+|---|
 | The probability of success is difficult to estimate; but if we never search the chance of success is zero. |
 
 #### What would it look like if all bits in each color channel were used?
