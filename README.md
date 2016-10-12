@@ -5,6 +5,10 @@
 
 This is a handy .Net library for embedding data into an image, and also reading data from an image. My algorithm uses a technique called the least significant bit (LSB) to read/write bits from the image.
 
+Run the following to get the code
+
+	Install-Package StegoSharp
+
 There are a few different strategies to consider when embedding/extracting bits from an image.
 
 ### Color channels (bits)
