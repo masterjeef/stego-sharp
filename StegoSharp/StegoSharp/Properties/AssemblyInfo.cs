@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("StegoSharp")]
 [assembly: AssemblyDescription("Steganography library for reading and embedding data into an image")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("https://github.com/masterjeef/stego-sharp")]
 [assembly: AssemblyProduct("StegoSharp")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
