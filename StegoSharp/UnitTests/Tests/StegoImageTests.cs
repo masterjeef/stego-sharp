@@ -69,7 +69,7 @@ namespace UnitTests.Tests
                 "You build atomic bombs, you wage wars, you murder, cheat, and lie to us" +
                 "and try to make us believe it's for our own good, yet we're the criminals.";
 
-            image.EmbedPayload(Encoding.Default.GetBytes(message));
+            image.EmbedPayload(message);
 
             var resultPath = @"iguana-embedded.png";
             image.Save(resultPath);

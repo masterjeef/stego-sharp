@@ -74,6 +74,23 @@ Utilizing only a subset of all the pixels will decrease capacity. For example, e
 * If the image type does not allow transparency, the then entire alpha channel can be used.
 * Writing a payload to jpegs is not supported due to lossy compression. Unfortunately the compression corrupts the payload.
 
+### Embedding The Payload
+
+**Strings**
+
+	var message = "This is a secret.... Shhhhhh.";
+	var path = @"images/foobar.png";
+	var image = new StegoImage(path);
+	image.EmbedPayload(message);
+
+**Files**
+
+	var path = @"images/foobar.png";
+	var image = new StegoImage(path);
+	
+	var payload = File.ReadAllBytes(@"images/payload.jpg");
+	image.EmbedPayload(payload);
+
 ### Having Fun with Steganography
 
 And so I decided to stegafy some images, see below :

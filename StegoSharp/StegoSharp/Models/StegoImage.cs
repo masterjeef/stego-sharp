@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using StegoSharp.Extensions;
 using StegoSharp.ImagePropertyParsing;
 using Encoder = System.Drawing.Imaging.Encoder;
+using System.Text;
 
 namespace StegoSharp.Models
 {
@@ -124,6 +125,13 @@ namespace StegoSharp.Models
                     result = 0;
                 }
             }
+        }
+
+        public void EmbedPayload(string payload)
+        {
+            var bytes = Encoding.Default.GetBytes(payload);
+
+            EmbedPayload(bytes);
         }
 
         public void EmbedPayload(byte[] payload)
