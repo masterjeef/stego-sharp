@@ -80,12 +80,10 @@ Utilizing only a subset of all the pixels will decrease capacity. For example, e
 
 	var message = "This is a secret.... Shhhhhh.";
 	var path = @"images/foobar.png";
+	
 	var image = new StegoImage(path);
-	image.EmbedPayload(message);
-	
-	// save the image
-	
-	image.Save(@"images/foobar-embedded.png")
+	image.EmbedPayload(message)
+		 .Save(@"images/foobar-embedded.png")
 
 **Files**
 
@@ -93,8 +91,8 @@ Utilizing only a subset of all the pixels will decrease capacity. For example, e
 	var image = new StegoImage(path);
 	
 	var payload = File.ReadAllBytes(@"images/payload.jpg");
-	image.EmbedPayload(payload);
-	image.Save(@"images/payload-embedded.png")
+	image.EmbedPayload(payload
+		 .Save(@"images/payload-embedded.png")
 
 ### Having Fun with Steganography
 

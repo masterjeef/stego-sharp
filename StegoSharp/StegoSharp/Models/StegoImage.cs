@@ -127,14 +127,16 @@ namespace StegoSharp.Models
             }
         }
 
-        public void EmbedPayload(string payload)
+        public StegoImage EmbedPayload(string payload)
         {
             var bytes = Encoding.Default.GetBytes(payload);
 
             EmbedPayload(bytes);
+
+            return this;
         }
 
-        public void EmbedPayload(byte[] payload)
+        public StegoImage EmbedPayload(byte[] payload)
         {
             // TODO: clean this up a bit more...
             if (_image.RawFormat.Equals(ImageFormat.Jpeg))
@@ -174,6 +176,8 @@ namespace StegoSharp.Models
                     break;
                 }
             }
+
+            return this;
         }
 
         private IEnumerable<byte> BreakIntoBits(byte payloadChunk)
@@ -189,7 +193,7 @@ namespace StegoSharp.Models
             }
         }
 
-        public void Save(string filename)
+        public StegoImage Save(string filename)
         {
             var encoder = LocateEncoder(_image.RawFormat);
 
@@ -205,6 +209,8 @@ namespace StegoSharp.Models
             };
 
             _image.Save(filename, encoder, encoderParameters);
+
+            return this;
         }
 
         private ImageCodecInfo LocateEncoder(ImageFormat format)
