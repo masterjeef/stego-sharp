@@ -3,9 +3,9 @@
 **Steganography**
 >the practice of concealing messages or information within other nonsecret text or data.
 
-This is a handy .Net library for embedding data into an image, and also reading data from an image. My algorithm uses a technique called the least significant bit (LSB) to read/write bits from the image.
+This is a handy .NET library for embedding data into an image, and also reading data from an image. My algorithm uses a technique called the least significant bit (LSB) to read/write bits from the image.
 
-Run the following to get the code
+To install StegoSharp, run the following command in the Package Manager Console
 
 	Install-Package StegoSharp
 
