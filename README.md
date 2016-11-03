@@ -1,6 +1,7 @@
 # Stego Sharp
 
 **Steganography**
+
 >the practice of concealing messages or information within other nonsecret text or data.
 
 This is a handy .NET library for embedding data into an image, and also reading data from an image. My algorithm uses a technique called the least significant bit (LSB) to read/write bits from the image.
@@ -25,9 +26,11 @@ SCENARIO :
 Embed the bytes into the Green, Blue, and Red channels. Note that the order of the channels does matter.
 
 CODE : 
-	
+
+```csharp
 	var image = new StegoImage("images/hello.png");
 	image.Strategy.ColorChannels = new[] { ColorChannel.G, ColorChannel.B, ColorChannel.R };
+```
 
 ### Number of bits
 
@@ -44,9 +47,10 @@ Embed the bits 11 (3 in decimal) into the red color channel for a single pixel. 
 
 CODE : 
 
-	var image = new StegoImage("images/world.png");
-	image.Strategy.BitsPerChannel = 2;
-	
+```csharp
+var image = new StegoImage("images/world.png");
+image.Strategy.BitsPerChannel = 2;
+```
 
 **Considerations**
 
@@ -61,9 +65,11 @@ SCENARIO :
 Reading/Writing to the even pixels in the image. {0, 2, 4, 6, 8, ...}
 
 CODE : 
-	
+
+```csharp
 	var image = new StegoImage("images/goodbye.png");
     image.Strategy.PixelSelection = p => p.Index % 2 == 0;
+```
 
 **Considerations**
 
@@ -78,21 +84,25 @@ Utilizing only a subset of all the pixels will decrease capacity. For example, e
 
 **Strings**
 
+```csharp
 	var message = "This is a secret.... Shhhhhh.";
 	var path = @"images/foobar.png";
 	
 	var image = new StegoImage(path);
 	image.EmbedPayload(message)
 		 .Save(@"images/foobar-embedded.png")
+```
 
 **Files**
 
+```csharp
 	var path = @"images/foobar.png";
 	var image = new StegoImage(path);
 	
 	var payload = File.ReadAllBytes(@"images/payload.jpg");
 	image.EmbedPayload(payload)
 		 .Save(@"images/payload-embedded.png")
+```
 
 ### Having Fun with Steganography
 
