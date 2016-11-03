@@ -28,8 +28,8 @@ Embed the bytes into the Green, Blue, and Red channels. Note that the order of t
 CODE : 
 
 ```csharp
-	var image = new StegoImage("images/hello.png");
-	image.Strategy.ColorChannels = new[] { ColorChannel.G, ColorChannel.B, ColorChannel.R };
+var image = new StegoImage("images/hello.png");
+image.Strategy.ColorChannels = new[] { ColorChannel.G, ColorChannel.B, ColorChannel.R };
 ```
 
 ### Number of bits
@@ -67,8 +67,8 @@ Reading/Writing to the even pixels in the image. {0, 2, 4, 6, 8, ...}
 CODE : 
 
 ```csharp
-	var image = new StegoImage("images/goodbye.png");
-    image.Strategy.PixelSelection = p => p.Index % 2 == 0;
+var image = new StegoImage("images/goodbye.png");
+image.Strategy.PixelSelection = p => p.Index % 2 == 0;
 ```
 
 **Considerations**
@@ -85,23 +85,23 @@ Utilizing only a subset of all the pixels will decrease capacity. For example, e
 **Strings**
 
 ```csharp
-	var message = "This is a secret.... Shhhhhh.";
-	var path = @"images/foobar.png";
-	
-	var image = new StegoImage(path);
-	image.EmbedPayload(message)
-		 .Save(@"images/foobar-embedded.png")
+var message = "This is a secret.... Shhhhhh.";
+var path = @"images/foobar.png";
+
+var image = new StegoImage(path);
+image.EmbedPayload(message)
+	 .Save(@"images/foobar-embedded.png")
 ```
 
 **Files**
 
 ```csharp
-	var path = @"images/foobar.png";
-	var image = new StegoImage(path);
-	
-	var payload = File.ReadAllBytes(@"images/payload.jpg");
-	image.EmbedPayload(payload)
-		 .Save(@"images/payload-embedded.png")
+var path = @"images/foobar.png";
+var image = new StegoImage(path);
+
+var payload = File.ReadAllBytes(@"images/payload.jpg");
+image.EmbedPayload(payload)
+	 .Save(@"images/payload-embedded.png")
 ```
 
 ### Having Fun with Steganography
