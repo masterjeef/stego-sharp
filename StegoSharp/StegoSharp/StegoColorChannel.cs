@@ -1,6 +1,6 @@
 ﻿using StegoSharp.Enums;
 
-namespace StegoSharp.Models
+namespace StegoSharp
 {
     public class StegoColorChannel
     {

@@ -4,17 +4,16 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using StegoSharp.Extensions;
-using StegoSharp.ImagePropertyParsing;
 using Encoder = System.Drawing.Imaging.Encoder;
 using System.Text;
 
-namespace StegoSharp.Models
+namespace StegoSharp
 {
 
     public class StegoImage
     {
+
         public const int BitsInAByte = 8;
-        private readonly StegoImagePropertyParser _parser = new StegoImagePropertyParser();
         private readonly string _path;
         private readonly Bitmap _image;
 
@@ -22,19 +21,11 @@ namespace StegoSharp.Models
         {
             _path = path;
             _image = new Bitmap(path);
-
-            ImageProperties = new StegoImageProperty[_image.PropertyItems.Length];
-
-            for (var i = 0; i < ImageProperties.Length; i++)
-            {
-                ImageProperties[i] = new StegoImageProperty(_image.PropertyItems[i]);
-            }
+            
 
             Strategy = Strategy ?? new StegoStrategy();
         }
-
-        public StegoImageProperty[] ImageProperties { get; private set; }
-
+        
         public StegoStrategy Strategy { get; set; }
 
         public int Width
@@ -69,6 +60,9 @@ namespace StegoSharp.Models
             }
         }
 
+        /// <summary>
+        /// Iterates over the pixels from left to right, top to bottom
+        /// </summary>
         public IEnumerable<StegoPixel> Pixels 
         {
             get
@@ -80,7 +74,13 @@ namespace StegoSharp.Models
             }
         }
 
-        private StegoPixel GetPixel(int index)
+        /// <summary>
+        /// Returns a pixel at the provided index
+        /// NOTE: First index is 0 and the last index is at (width * height) - 1
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public StegoPixel GetPixel(int index)
         {
             var x = index % Width;
             var y = index / Width;
@@ -95,17 +95,12 @@ namespace StegoSharp.Models
             };
         }
 
-        private IEnumerable<byte> ExtractBits()
-        {
-            foreach (var pixel in Pixels.Where(Strategy.PixelSelection))
-            {
-                foreach (var stegoColorChannel in pixel.GetColorChannels(Strategy.ColorChannels))
-                {
-                    yield return (byte) stegoColorChannel.Value.LowestBits(Strategy.BitsPerChannel);
-                }
-            }
-        }
+        #region Reading the payload
 
+        /// <summary>
+        /// Reads the raw bytes from the pixels in the image
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<byte> ExtractBytes()
         {
             var bitCount = 0;
@@ -120,12 +115,27 @@ namespace StegoSharp.Models
 
                 if (bitCount >= BitsInAByte)
                 {
-                    yield return (byte) result;
+                    yield return (byte)result;
                     bitCount = 0;
                     result = 0;
                 }
             }
         }
+
+        private IEnumerable<byte> ExtractBits()
+        {
+            foreach (var pixel in Pixels.Where(Strategy.PixelSelection))
+            {
+                foreach (var stegoColorChannel in pixel.GetColorChannels(Strategy.ColorChannels))
+                {
+                    yield return (byte) stegoColorChannel.Value.LowestBits(Strategy.BitsPerChannel);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Embedding the payload
 
         public StegoImage EmbedPayload(string payload)
         {
@@ -136,14 +146,13 @@ namespace StegoSharp.Models
             return this;
         }
 
+        /// <summary>
+        /// Embeds the raw bytes into the images pixels
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
         public StegoImage EmbedPayload(byte[] payload)
         {
-            // TODO: clean this up a bit more...
-            if (_image.RawFormat.Equals(ImageFormat.Jpeg))
-            {
-                throw new Exception("Jpegs not supported due to lossy compression. ):");
-            }
-
             if (payload.Length > ByteCapacity)
             {
                 var message = string.Format("Too much data, only {0} bytes can be embedded.", ByteCapacity);
@@ -193,6 +202,13 @@ namespace StegoSharp.Models
             }
         }
 
+        #endregion
+
+        /// <summary>
+        /// Saves the image at the specified path
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         public StegoImage Save(string filename)
         {
             var encoder = LocateEncoder(_image.RawFormat);
@@ -251,7 +267,7 @@ namespace StegoSharp.Models
             return true;
         }
 
-        public IEnumerable<Tuple<StegoPixel, StegoPixel>> PixelDifference(StegoImage otherImage, Func<StegoPixel, bool> pixelsToCompare = null)
+        public IEnumerable<Tuple<StegoPixel, StegoPixel>> PixelDiff(StegoImage otherImage, Func<StegoPixel, bool> pixelsToCompare = null)
         {
             if (Width != otherImage.Width || Height != otherImage.Height)
             {
@@ -272,19 +288,6 @@ namespace StegoSharp.Models
                     yield return Tuple.Create(pixel, otherPixel);
                 }
             }
-        }
-
-        public override string ToString()
-        {
-            var result = string.Format("Image '{0}'\n", _path);
-
-            for (var i = 0; i < ImageProperties.Length; i++)
-            {
-                var imageProperty = ImageProperties[i];
-                result += string.Format("Property {0} - 0x{3} [{1}]\nResult : {2}\n", i, imageProperty.PropertyItemType, _parser.Parse(imageProperty), imageProperty.PropertyItem.Id);
-            }
-
-            return result + "\n";
         }
     }
 }

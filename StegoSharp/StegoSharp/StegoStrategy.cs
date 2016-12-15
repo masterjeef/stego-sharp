@@ -2,7 +2,7 @@
 using System.Linq;
 using StegoSharp.Enums;
 
-namespace StegoSharp.Models
+namespace StegoSharp
 {
     public class StegoStrategy
     {
