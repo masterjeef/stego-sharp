@@ -10,7 +10,7 @@ using System.Text;
 namespace StegoSharp
 {
 
-    public class StegoImage
+    public class StegoImage : IDisposable
     {
 
         public const int BitsInAByte = 8;
@@ -288,6 +288,11 @@ namespace StegoSharp
                     yield return Tuple.Create(pixel, otherPixel);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            _image.Dispose();
         }
     }
 }
