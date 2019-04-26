@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StegoSharp", "StegoSharp\StegoSharp.csproj", "{2442E986-696A-406B-A349-AAA3C652FE1A}"
 EndProject
@@ -15,19 +15,32 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2442E986-696A-406B-A349-AAA3C652FE1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2442E986-696A-406B-A349-AAA3C652FE1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2442E986-696A-406B-A349-AAA3C652FE1A}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{2442E986-696A-406B-A349-AAA3C652FE1A}.Debug|Any CPU.Build.0 = Debug|x86
+		{2442E986-696A-406B-A349-AAA3C652FE1A}.Debug|x86.ActiveCfg = Debug|x86
+		{2442E986-696A-406B-A349-AAA3C652FE1A}.Debug|x86.Build.0 = Debug|x86
 		{2442E986-696A-406B-A349-AAA3C652FE1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2442E986-696A-406B-A349-AAA3C652FE1A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B136D070-A746-483C-8483-29888BF149B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B136D070-A746-483C-8483-29888BF149B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2442E986-696A-406B-A349-AAA3C652FE1A}.Release|x86.ActiveCfg = Release|x86
+		{2442E986-696A-406B-A349-AAA3C652FE1A}.Release|x86.Build.0 = Release|x86
+		{B136D070-A746-483C-8483-29888BF149B6}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B136D070-A746-483C-8483-29888BF149B6}.Debug|Any CPU.Build.0 = Debug|x86
+		{B136D070-A746-483C-8483-29888BF149B6}.Debug|x86.ActiveCfg = Debug|x86
+		{B136D070-A746-483C-8483-29888BF149B6}.Debug|x86.Build.0 = Debug|x86
 		{B136D070-A746-483C-8483-29888BF149B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B136D070-A746-483C-8483-29888BF149B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B136D070-A746-483C-8483-29888BF149B6}.Release|x86.ActiveCfg = Release|x86
+		{B136D070-A746-483C-8483-29888BF149B6}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69621C09-F687-4558-891B-46F9325979CD}
 	EndGlobalSection
 EndGlobal
