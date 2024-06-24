@@ -9,7 +9,7 @@
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/masterjeef/stego-sharp</projectUrl>
     <description>$description$</description>
-    <releaseNotes>Add IDisposable support to StegoImage</releaseNotes>
+    <releaseNotes>Adds Bitmap constructor to StegoImage</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>Steganography</tags>
   </metadata>

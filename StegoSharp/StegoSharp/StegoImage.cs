@@ -14,18 +14,20 @@ namespace StegoSharp
     {
 
         public const int BitsInAByte = 8;
-        private readonly string _path;
         private readonly Bitmap _image;
 
         public StegoImage(string path)
         {
-            _path = path;
             _image = new Bitmap(path);
-            
-
             Strategy = Strategy ?? new StegoStrategy();
         }
-        
+
+        public StegoImage(Bitmap image)
+        {
+            _image = image;
+            Strategy = Strategy ?? new StegoStrategy();
+        }
+
         public StegoStrategy Strategy { get; set; }
 
         public int Width

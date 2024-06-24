@@ -1,4 +1,5 @@
 ﻿using StegoSharp;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -104,6 +105,30 @@ namespace UnitTests.Tests
                         Assert.Equal(message, embeddedMessage);
                     }
                 }
+            }
+        }
+
+        [Fact]
+        public void StegoImage_ctor_should_accept_a_bitmap()
+        {
+            var path = @"images/iguana.png";
+            var resultPath = @"iguana-embedded.png";
+            var message = "foo bar";
+
+            using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using (var image = new StegoImage(new Bitmap(fileStream)))
+            {
+                image.EmbedPayload(message)
+                    .Save(resultPath);
+            }
+
+            using (FileStream fileStream = new FileStream(resultPath, FileMode.Open, FileAccess.Read))
+            using (var imageWithMessage = new StegoImage(new Bitmap(fileStream)))
+            {
+                var embeddedString = Encoding.Default.GetString(imageWithMessage.ExtractBytes().ToArray());
+                var embedded = embeddedString.Substring(0, message.Length);
+
+                Assert.Equal(message, embedded);
             }
         }
     }
